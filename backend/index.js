@@ -1,7 +1,3 @@
-// backend/server.js
-import dotenv from 'dotenv';
-dotenv.config();
-
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from 'cors';
@@ -13,8 +9,10 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import Message from './models/Message.js';
 
-
+import dotenv from 'dotenv';
+dotenv.config();
 const app = express();
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
