@@ -9,6 +9,8 @@ import {
   FaLightbulb,
 } from "react-icons/fa";
 
+
+
 const features = [
   {
     title: "AI Resume Analysis",

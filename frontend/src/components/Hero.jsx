@@ -159,12 +159,16 @@ export default function Example() {
               >
                 Get started
               </a>
-              <a
-                href="/about"
-                className="text-sm/6 font-semibold text-gray-900"
-              >
-                Learn more <span aria-hidden="true">→</span>
-              </a>
+             <ScrollLink
+  to="features" // 👈 This should match the section's id
+  smooth="easeInOutQuad"
+  duration={800}
+  offset={-70}
+  className="cursor-pointer text-sm font-semibold text-gray-900 hover:text-blue-600 font-mono"
+>
+  Learn more <span aria-hidden="true">→</span>
+</ScrollLink>
+
             </div>
           </div>
         </div>
