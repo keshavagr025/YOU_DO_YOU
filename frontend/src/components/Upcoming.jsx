@@ -5,7 +5,8 @@ import { FaBolt, FaUserCheck, FaBrain } from "react-icons/fa";
 import rocket from '../assets/rocket.gif';
 const Upcoming = () => {
   return (
-    <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white min-h-screen py-24 px-6 overflow-hidden">
+    <section
+    id = "upcoming" className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white min-h-screen py-24 px-6 overflow-hidden">
       {/* Snow Effect Layer */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
         <div className="absolute top-0 left-0 w-full h-full animate-snowfall bg-[url('/snow.png')] opacity-20" />

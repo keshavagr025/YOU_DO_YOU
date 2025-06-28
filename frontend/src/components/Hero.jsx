@@ -5,12 +5,14 @@ import { useState } from "react";
 import { Dialog, DialogPanel } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import logo from "../assets/logo.png";
-const navigation = [
-  { name: "Hero", href: "/hero" },
+import { Link as ScrollLink } from "react-scroll";
 
-  { name: "Features", href: "/features" },
-  { name: "Upcoming", href: "/upcoming" },
-  { name: "Testimonials", href: "/testimonials" },
+const navigation = [
+  { name: "Hero", id: "hero" },
+  { name: "Base", id: "base" },
+  { name: "Features", id: "features" },
+  { name: "Upcoming", id: "upcoming" },
+  { name: "Testimonials", id: "testimonials" },
 ];
 
 export default function Example() {
@@ -26,11 +28,7 @@ export default function Example() {
           <div className="flex lg:flex-1">
             <a href="#" className="-m-1.5 p-1.5">
               <span className="sr-only">Your Company</span>
-              <img
-                src={logo}
-                alt="ReadyBoss Logo"
-                className="h-14 w-auto" // Increased height
-              />
+              <img src={logo} alt="ReadyBoss Logo" className="h-14 w-auto" />
             </a>
           </div>
 
@@ -44,23 +42,31 @@ export default function Example() {
               <Bars3Icon aria-hidden="true" className="size-6" />
             </button>
           </div>
+
+          {/* 🌐 Desktop Nav */}
           <div className="hidden lg:flex lg:gap-x-12">
             {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                className="text-sm/10 font-semibold text-gray-900"
+              <ScrollLink
+                key={item.id}
+                to={item.id}
+                smooth={true}
+                duration={1000}
+                offset={-70}
+                className="cursor-pointer text-sm font-semibold text-gray-900 hover:text-blue-600"
               >
                 {item.name}
-              </Link>
+              </ScrollLink>
             ))}
           </div>
+
           <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-            <a href="/login" className="text-sm/6 font-semibold text-gray-900">
+            <a href="/login" className="text-sm font-semibold text-gray-900">
               Log in <span aria-hidden="true">&rarr;</span>
             </a>
           </div>
         </nav>
+
+        {/* 📱 Mobile Nav */}
         <Dialog
           open={mobileMenuOpen}
           onClose={setMobileMenuOpen}
@@ -82,24 +88,29 @@ export default function Example() {
                 <XMarkIcon aria-hidden="true" className="size-6" />
               </button>
             </div>
+
             <div className="mt-6 flow-root">
               <div className="-my-6 divide-y divide-gray-500/10">
                 <div className="space-y-2 py-6">
                   {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.href}
-                      className="-mx-3 block rounded-lg px-3 py-2 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                      onClick={() => setMobileMenuOpen(false)} // optional: close menu on click
+                    <ScrollLink
+                      key={item.id}
+                      to={item.id}
+                      smooth={true}
+                      duration={500}
+                      offset={-70}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold text-gray-900 hover:bg-gray-50"
                     >
                       {item.name}
-                    </Link>
+                    </ScrollLink>
                   ))}
                 </div>
+
                 <div className="py-6">
                   <a
                     href="/login"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold text-gray-900 hover:bg-gray-50"
                   >
                     Log in
                   </a>
