@@ -13,6 +13,8 @@ const Base= () => {
     if (file && (file.type === "application/pdf" || file.name.endsWith('.pdf'))) {
       setUploadedFile(file);
       setIsAnalyzing(true);
+      
+      // Simulate analysis
       setTimeout(() => {
         setIsAnalyzing(false);
         setAnalysisResult({
@@ -66,7 +68,7 @@ const Base= () => {
 
   return (
     <section 
-    id="base" className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white min-h-screen py-24 px-6 overflow-hidden">
+    id="base" className="relative bg-gradient-to-br from-purple-900 via-indigo-500 to-slate-900 text-white min-h-screen  py-24 px-6 overflow-hidden">
       {/* ANIMATED BACKGROUND ELEMENTS */}
       <div className="absolute top-0 left-0 w-full h-full">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-pulse"></div>
@@ -99,7 +101,7 @@ const Base= () => {
           </motion.h1>
 
           <motion.p 
-            className="text-xl text-gray-300 leading-relaxed"
+            className="text-xl text-gray-300 leading-relaxed font-mono"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}

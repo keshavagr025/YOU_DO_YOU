@@ -10,6 +10,13 @@ import {
   XCircle,
   RefreshCw,
   Eye,
+  TrendingUp,
+  Award,
+  Zap,
+  ChevronRight,
+  Download,
+  BarChart3,
+  Brain,
 } from "lucide-react";
 
 // API Base URL - Update this to match your backend
@@ -33,7 +40,7 @@ export default function Analytics() {
   const [uploadedFile, setUploadedFile] = useState(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [debugInfo, setDebugInfo] = useState(null); // For debugging API responses
+  const [debugInfo, setDebugInfo] = useState(null);
 
   // Fetch available job roles on component mount
   useEffect(() => {
@@ -73,18 +80,16 @@ export default function Analytics() {
       isAnalyzing: true,
       analysisComplete: false,
       uploadProgress: 0,
-      atsScore: 0, // Reset score
+      atsScore: 0,
     }));
 
     try {
-      // Create FormData for file upload
       const formData = new FormData();
       formData.append("resume", file);
       formData.append("uploadedBy", "web-user");
 
       console.log("Uploading file:", file.name);
 
-      // Upload and process resume
       const uploadResponse = await fetch(`${API_BASE_URL}/resumes/upload`, {
         method: "POST",
         body: formData,
@@ -98,7 +103,6 @@ export default function Analytics() {
       const uploadData = await uploadResponse.json();
       console.log("Upload response:", uploadData);
 
-      // Handle nested data structure
       const resumeInfo = uploadData.data || uploadData;
       const resumeId = resumeInfo.resumeId;
       const extractedSkills = resumeInfo.extractedSkills || [];
@@ -113,7 +117,6 @@ export default function Analytics() {
         uploadProgress: 50,
       }));
 
-      // If a job role is selected, analyze immediately
       if (selectedRole && resumeId) {
         console.log("Starting analysis with resumeId:", resumeId, "and jobRole:", selectedRole);
         await analyzeResume(resumeId, selectedRole);
@@ -168,13 +171,8 @@ export default function Analytics() {
       const analysisData = await response.json();
       console.log("Analysis response:", analysisData);
 
-      // Store debug info
-      // setDebugInfo(analysisData);
-
-      // Handle different response structures
       const result = analysisData.data || analysisData;
       
-      // Extract ATS score with multiple fallbacks
       let atsScore = 0;
       if (typeof result.atsScore === 'number') {
         atsScore = result.atsScore;
@@ -196,7 +194,6 @@ export default function Analytics() {
         uploadProgress: 100,
       }));
 
-      // Optional: Warn user if AI was not used
       if (result.aiProcessingUsed === false) {
         console.warn("AI processing was not used for analysis");
       }
@@ -213,14 +210,12 @@ export default function Analytics() {
     }
   };
 
-  // Force re-analysis (for debugging)
   const forceReAnalysis = () => {
     if (resumeData.resumeId && selectedRole) {
       analyzeResume(resumeData.resumeId, selectedRole);
     }
   };
 
-  // Handle job role change
   const handleJobRoleChange = async (newJobRoleId) => {
     setSelectedRole(newJobRoleId);
 
@@ -229,27 +224,32 @@ export default function Analytics() {
     }
   };
 
-  // Get score status for styling
   const getScoreStatus = (score) => {
     if (score >= 80)
       return {
-        color: "text-green-600",
-        bg: "bg-green-50",
+        color: "text-emerald-600",
+        bg: "bg-emerald-50",
+        ring: "ring-emerald-200",
         icon: CheckCircle,
         label: "Excellent",
+        gradient: "from-emerald-500 to-green-500",
       };
     if (score >= 60)
       return {
-        color: "text-yellow-600",
-        bg: "bg-yellow-50",
+        color: "text-amber-600",
+        bg: "bg-amber-50",
+        ring: "ring-amber-200",
         icon: AlertCircle,
         label: "Good",
+        gradient: "from-amber-500 to-orange-500",
       };
     return {
       color: "text-red-600",
       bg: "bg-red-50",
+      ring: "ring-red-200",
       icon: XCircle,
       label: "Needs Improvement",
+      gradient: "from-red-500 to-pink-500",
     };
   };
 
@@ -258,282 +258,391 @@ export default function Analytics() {
   const selectedJobRole = jobRoles.find((role) => role._id === selectedRole);
 
   return (
-    <div className="p-6 bg-gray-50 min-h-screen">
-      <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">
-        AI-Powered Resume Analytics
-      </h1>
-
-      {/* Error Alert */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
-          <div className="flex items-center space-x-2">
-            <XCircle className="w-5 h-5 text-red-600" />
-            <span className="text-red-800 font-medium">Error: {error}</span>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+      {/* Header Section */}
+      <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 via-purple-600 to-indigo-600 px-6 py-16">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative max-w-4xl mx-auto text-center">
+          <div className="flex items-center justify-center mb-6">
+            <div className="bg-white/20 backdrop-blur-sm rounded-full p-4">
+              <Brain className="w-12 h-12 text-white" />
+            </div>
           </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+            AI-Powered Resume Analytics
+          </h1>
+          <p className="text-xl text-blue-100 max-w-2xl mx-auto">
+            Optimize your resume with advanced AI analysis and get instant ATS compatibility scores
+          </p>
         </div>
-      )}
+      </div>
 
-      {/* File Upload Section */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6 border border-gray-200">
-        <div className="flex items-center space-x-4 mb-4">
-          <Upload className="text-blue-600 w-6 h-6" />
-          <h2 className="text-xl font-semibold text-gray-800">Upload Resume</h2>
-        </div>
-
-        <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-          <input
-            type="file"
-            accept=".pdf,.doc,.docx,.txt"
-            onChange={handleFileUpload}
-            className="hidden"
-            id="resumeUpload"
-            disabled={resumeData.isAnalyzing}
-          />
-          <label
-            htmlFor="resumeUpload"
-            className={`cursor-pointer flex flex-col items-center space-y-2 ${
-              resumeData.isAnalyzing ? "opacity-50 cursor-not-allowed" : ""
-            }`}
-          >
-            <Upload className="w-12 h-12 text-gray-400" />
-            <span className="text-lg font-medium text-gray-600">
-              {resumeData.fileName
-                ? resumeData.fileName
-                : "Click to upload your resume"}
-            </span>
-            <span className="text-sm text-gray-500">
-              Supports PDF, DOC, DOCX, TXT files (Max 10MB)
-            </span>
-          </label>
-        </div>
-
-        {/* Upload Progress */}
-        {resumeData.isAnalyzing && (
-          <div className="mt-4">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-600">
-                Processing resume...
-              </span>
-              <span className="text-sm text-gray-600">
-                {resumeData.uploadProgress}%
-              </span>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="bg-blue-600 h-2 rounded-full transition-all duration-500"
-                style={{ width: `${resumeData.uploadProgress}%` }}
-              ></div>
-            </div>
-            <div className="mt-2 flex items-center justify-center space-x-2">
-              <RefreshCw className="animate-spin w-4 h-4 text-blue-600" />
-              <span className="text-blue-600 text-sm">
-                {resumeData.uploadProgress < 50
-                  ? "Extracting text and skills..."
-                  : "Analyzing with AI..."}
-              </span>
+      <div className="max-w-6xl mx-auto px-6 -mt-8 relative z-10">
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 bg-red-50 border-l-4 border-red-400 rounded-r-lg p-6 shadow-lg animate-pulse">
+            <div className="flex items-center space-x-3">
+              <XCircle className="w-6 h-6 text-red-500" />
+              <div>
+                <h3 className="text-red-800 font-semibold">Error Occurred</h3>
+                <p className="text-red-700 text-sm mt-1">{error}</p>
+              </div>
             </div>
           </div>
         )}
-      </div>
 
-      {/* Job Role Selector */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-2">
-          <label className="block text-sm font-semibold text-gray-700">
-            Select Target Job Role:
-          </label>
-          {resumeData.resumeId && selectedRole && (
-            <button
-              onClick={forceReAnalysis}
-              disabled={loading}
-              className="text-sm text-blue-600 hover:text-blue-700 flex items-center space-x-1"
-            >
-              <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-              <span>Re-analyze</span>
-            </button>
-          )}
+        {/* Stats Overview */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">ATS Score</p>
+                <p className="text-2xl font-bold text-gray-900">{resumeData.atsScore}%</p>
+              </div>
+              <div className={`p-3 rounded-full ${scoreStatus.bg}`}>
+                <BarChart3 className={`w-6 h-6 ${scoreStatus.color}`} />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Skills Found</p>
+                <p className="text-2xl font-bold text-gray-900">{resumeData.extractedSkills.length}</p>
+              </div>
+              <div className="p-3 rounded-full bg-yellow-50">
+                <Star className="w-6 h-6 text-yellow-500" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">Keywords Matched</p>
+                <p className="text-2xl font-bold text-gray-900">{resumeData.matchedKeywords.length}</p>
+              </div>
+              <div className="p-3 rounded-full bg-blue-50">
+                <Target className="w-6 h-6 text-blue-500" />
+              </div>
+            </div>
+          </div>
+          
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100 hover:shadow-xl transition-shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-600">AI Suggestions</p>
+                <p className="text-2xl font-bold text-gray-900">{resumeData.suggestions.length}</p>
+              </div>
+              <div className="p-3 rounded-full bg-green-50">
+                <Lightbulb className="w-6 h-6 text-green-500" />
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="flex items-center space-x-4">
+
+        {/* File Upload Section */}
+        <div className="bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-3 bg-blue-50 rounded-full">
+              <Upload className="text-blue-600 w-6 h-6" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Upload Your Resume</h2>
+              <p className="text-gray-600">Get instant AI-powered analysis and optimization suggestions</p>
+            </div>
+          </div>
+
+          <div className="relative">
+            <input
+              type="file"
+              accept=".pdf,.doc,.docx,.txt"
+              onChange={handleFileUpload}
+              className="hidden"
+              id="resumeUpload"
+              disabled={resumeData.isAnalyzing}
+            />
+            <label
+              htmlFor="resumeUpload"
+              className={`relative block w-full cursor-pointer ${
+                resumeData.isAnalyzing ? "opacity-50 cursor-not-allowed" : ""
+              }`}
+            >
+              <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center hover:border-blue-400 hover:bg-blue-50/50 transition-all duration-300 group">
+                <div className="space-y-4">
+                  <div className="mx-auto w-16 h-16 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <Upload className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-semibold text-gray-700">
+                      {resumeData.fileName ? resumeData.fileName : "Drop your resume here or click to browse"}
+                    </p>
+                    <p className="text-gray-500 mt-2">
+                      Supports PDF, DOC, DOCX, TXT files • Max 10MB
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </label>
+
+            {/* Upload Progress */}
+            {resumeData.isAnalyzing && (
+              <div className="mt-6 bg-gray-50 rounded-lg p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center space-x-3">
+                    <RefreshCw className="animate-spin w-5 h-5 text-blue-600" />
+                    <span className="font-medium text-gray-700">
+                      {resumeData.uploadProgress < 50
+                        ? "Extracting content..."
+                        : "Analyzing with AI..."}
+                    </span>
+                  </div>
+                  <span className="text-sm font-medium text-gray-600">
+                    {resumeData.uploadProgress}%
+                  </span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
+                  <div
+                    className="bg-gradient-to-r from-blue-500 to-purple-500 h-3 rounded-full transition-all duration-500 relative"
+                    style={{ width: `${resumeData.uploadProgress}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/30 animate-pulse"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Job Role Selector */}
+        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 bg-purple-50 rounded-lg">
+                <Target className="w-5 h-5 text-purple-600" />
+              </div>
+              <h3 className="text-lg font-semibold text-gray-900">Target Job Role</h3>
+            </div>
+            {resumeData.resumeId && selectedRole && (
+              <button
+                onClick={forceReAnalysis}
+                disabled={loading}
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+                <span className="text-sm font-medium">Re-analyze</span>
+              </button>
+            )}
+          </div>
+          
           <select
             value={selectedRole}
             onChange={(e) => handleJobRoleChange(e.target.value)}
-            className="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            className="w-full p-4 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-gray-50 text-gray-900 font-medium"
             disabled={loading}
           >
-            <option value="">Select a job role...</option>
+            <option value="">Select a target role...</option>
             {jobRoles.map((role) => (
               <option key={role._id} value={role._id}>
-                {role.title} ({role.industry})
+                {role.title} • {role.industry}
               </option>
             ))}
           </select>
-          {loading && (
-            <RefreshCw className="animate-spin w-5 h-5 text-blue-600" />
-          )}
-        </div>
-        {selectedJobRole && (
-          <p className="text-sm text-gray-600 mt-2">
-            {selectedJobRole.description}
-          </p>
-        )}
-      </div>
-
-      {/* ATS Score Card */}
-      <div
-        className={`bg-white rounded-lg shadow p-6 mb-6 border border-gray-200 ${scoreStatus.bg}`}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-4">
-            <Target className="text-purple-600 w-6 h-6" />
-            <h2 className="text-xl font-semibold text-gray-800">ATS Score</h2>
-          </div>
-          <div className="flex items-center space-x-2">
-            <ScoreIcon className={`w-5 h-5 ${scoreStatus.color}`} />
-            <span className={`text-sm font-medium ${scoreStatus.color}`}>
-              {scoreStatus.label}
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-baseline space-x-4 mt-4">
-          <p className={`text-4xl font-bold ${scoreStatus.color}`}>
-            {resumeData.atsScore || 0}%
-          </p>
-          <div className="flex-1">
-            <div className="w-full bg-gray-200 rounded-full h-3">
-              <div
-                className={`h-3 rounded-full transition-all duration-1000 ${
-                  resumeData.atsScore >= 80
-                    ? "bg-green-500"
-                    : resumeData.atsScore >= 60
-                    ? "bg-yellow-500"
-                    : "bg-red-500"
-                }`}
-                style={{ width: `${resumeData.atsScore || 0}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-3">
-          <p className="text-gray-500 text-sm">
-            {resumeData.atsScore >= 80
-              ? "Excellent! Your resume is well-optimized for ATS systems."
-              : resumeData.atsScore >= 60
-              ? "Good score! Consider the AI suggestions below to improve further."
-              : resumeData.atsScore > 0
-              ? "Your resume needs optimization. Follow the AI-powered suggestions below."
-              : "Upload a resume and select a job role to get your ATS score."}
-          </p>
           
-          {/* Status indicators */}
-          <div className="flex items-center space-x-4 mt-2 text-xs text-gray-500">
-            <span>Resume ID: {resumeData.resumeId || 'Not uploaded'}</span>
-            <span>Analysis: {resumeData.analysisComplete ? 'Complete' : 'Pending'}</span>
-            <span>Score: {resumeData.atsScore || 0}</span>
+          {selectedJobRole && (
+            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-600 leading-relaxed">
+                {selectedJobRole.description}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* ATS Score Card */}
+        <div className={`bg-white rounded-xl shadow-lg p-8 mb-8 border border-gray-100 ${scoreStatus.ring} ring-2`}>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center space-x-4">
+              <div className={`p-4 ${scoreStatus.bg} rounded-xl`}>
+                <Award className="text-purple-600 w-8 h-8" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">ATS Compatibility Score</h2>
+                <p className="text-gray-600">How well your resume passes automated screening</p>
+              </div>
+            </div>
+            <div className="flex items-center space-x-3">
+              <ScoreIcon className={`w-6 h-6 ${scoreStatus.color}`} />
+              <span className={`text-lg font-bold ${scoreStatus.color} px-3 py-1 rounded-full ${scoreStatus.bg}`}>
+                {scoreStatus.label}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="flex items-center space-x-6 mb-4">
+              <div className={`text-6xl font-bold bg-gradient-to-r ${scoreStatus.gradient} bg-clip-text text-transparent`}>
+                {resumeData.atsScore || 0}%
+              </div>
+              <div className="flex-1">
+                <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                  <div
+                    className={`h-4 rounded-full bg-gradient-to-r ${scoreStatus.gradient} transition-all duration-1000 relative`}
+                    style={{ width: `${resumeData.atsScore || 0}%` }}
+                  >
+                    <div className="absolute inset-0 bg-white/20 animate-pulse"></div>
+                  </div>
+                </div>
+                <div className="flex justify-between text-xs text-gray-500 mt-2">
+                  <span>0%</span>
+                  <span>50%</span>
+                  <span>100%</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-50 rounded-lg p-4">
+              <p className="text-gray-700 leading-relaxed">
+                {resumeData.atsScore >= 80
+                  ? "🎉 Excellent! Your resume is highly optimized for ATS systems and should pass most automated screenings."
+                  : resumeData.atsScore >= 60
+                  ? "👍 Good score! Your resume has solid ATS compatibility. Check the suggestions below for further improvements."
+                  : resumeData.atsScore > 0
+                  ? "⚠️ Your resume needs optimization to improve ATS compatibility. Follow our AI-powered suggestions below."
+                  : "📄 Upload your resume and select a target job role to get your personalized ATS compatibility score."}
+              </p>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Rest of the component remains the same... */}
-      
-      {/* Extracted Skills */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6 border border-gray-200">
-        <div className="flex items-center space-x-4">
-          <Star className="text-yellow-500 w-6 h-6" />
-          <h2 className="text-xl font-semibold text-gray-800">
-            AI-Extracted Skills ({resumeData.extractedSkills.length})
-          </h2>
-        </div>
-        <div className="mt-4">
-          {resumeData.extractedSkills.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {resumeData.extractedSkills.map((skill, index) => (
-                <span
-                  key={index}
-                  className="bg-yellow-100 text-yellow-800 text-sm font-medium px-3 py-1 rounded-full border border-yellow-200"
-                >
-                  {skill}
-                </span>
-              ))}
+        {/* Content Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+          {/* Extracted Skills */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-3 bg-yellow-50 rounded-xl">
+                <Star className="text-yellow-500 w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">AI-Extracted Skills</h3>
+                <p className="text-sm text-gray-600">{resumeData.extractedSkills.length} skills identified</p>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <Star className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 italic">
-                Upload a resume to see AI-extracted skills
-              </p>
-            </div>
-          )}
-        </div>
-      </div>
+            
+            {resumeData.extractedSkills.length > 0 ? (
+              <div className="space-y-3">
+                {resumeData.extractedSkills.map((skill, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg border border-yellow-200 hover:bg-yellow-100 transition-colors"
+                  >
+                    <span className="font-medium text-yellow-800">{skill}</span>
+                    <Zap className="w-4 h-4 text-yellow-600" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Star className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">No skills extracted yet</p>
+                <p className="text-sm text-gray-400 mt-1">Upload a resume to see AI-extracted skills</p>
+              </div>
+            )}
+          </div>
 
-      {/* Matched Keywords */}
-      <div className="bg-white rounded-lg shadow p-6 mb-6 border border-gray-200">
-        <div className="flex items-center space-x-4">
-          <FileText className="text-blue-600 w-6 h-6" />
-          <h2 className="text-xl font-semibold text-gray-800">
-            Matched Keywords ({resumeData.matchedKeywords.length})
-          </h2>
-        </div>
-        <div className="mt-4">
-          {resumeData.matchedKeywords.length > 0 ? (
-            <div className="flex flex-wrap gap-2">
-              {resumeData.matchedKeywords.map((keyword, index) => (
-                <span
-                  key={index}
-                  className="bg-blue-100 text-blue-800 text-sm font-medium px-3 py-1 rounded-full border border-blue-200"
-                >
-                  {keyword}
-                </span>
-              ))}
+          {/* Matched Keywords */}
+          <div className="bg-white rounded-xl shadow-lg p-6 border border-gray-100">
+            <div className="flex items-center space-x-3 mb-6">
+              <div className="p-3 bg-blue-50 rounded-xl">
+                <FileText className="text-blue-600 w-6 h-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-gray-900">Matched Keywords</h3>
+                <p className="text-sm text-gray-600">{resumeData.matchedKeywords.length} keywords matched</p>
+              </div>
             </div>
-          ) : (
-            <div className="text-center py-8">
-              <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-              <p className="text-gray-500 italic">
-                {resumeData.analysisComplete && selectedRole
-                  ? "No keywords matched for this role. Consider adding relevant terms from the suggestions below."
-                  : "Upload a resume and select a job role to see matched keywords"}
-              </p>
+            
+            {resumeData.matchedKeywords.length > 0 ? (
+              <div className="space-y-3">
+                {resumeData.matchedKeywords.map((keyword, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border border-blue-200 hover:bg-blue-100 transition-colors"
+                  >
+                    <span className="font-medium text-blue-800">{keyword}</span>
+                    <CheckCircle className="w-4 h-4 text-blue-600" />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <FileText className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-gray-500 font-medium">
+                  {resumeData.analysisComplete && selectedRole
+                    ? "No keywords matched"
+                    : "No analysis completed yet"}
+                </p>
+                <p className="text-sm text-gray-400 mt-1">
+                  {resumeData.analysisComplete && selectedRole
+                    ? "Consider adding relevant terms from the suggestions"
+                    : "Upload a resume and select a job role"}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* AI-Powered Suggestions */}
+        <div className="bg-white rounded-xl shadow-lg p-8 border border-gray-100 mb-8">
+          <div className="flex items-center space-x-4 mb-6">
+            <div className="p-4 bg-green-50 rounded-xl">
+              <Lightbulb className="text-green-600 w-8 h-8" />
             </div>
-          )}
-        </div>
-      </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">AI-Powered Optimization Suggestions</h2>
+              <p className="text-gray-600">Personalized recommendations to improve your ATS score</p>
+            </div>
+          </div>
 
-      {/* AI-Powered Suggestions */}
-      <div className="bg-white rounded-lg shadow p-6 border border-gray-200">
-        <div className="flex items-center space-x-4">
-          <Lightbulb className="text-green-600 w-6 h-6" />
-          <h2 className="text-xl font-semibold text-gray-800">
-            AI-Powered Optimization Suggestions
-          </h2>
-        </div>
-
-        {resumeData.suggestions.length > 0 ? (
-          <div className="mt-4">
-            <ul className="space-y-3">
+          {resumeData.suggestions.length > 0 ? (
+            <div className="space-y-4">
               {resumeData.suggestions.map((tip, index) => (
-                <li
+                <div
                   key={index}
-                  className="flex items-start space-x-3 p-3 bg-green-50 rounded-lg border border-green-200"
+                  className="flex items-start space-x-4 p-6 bg-green-50 rounded-xl border border-green-200 hover:bg-green-100 transition-colors group"
                 >
-                  <Lightbulb className="text-green-500 mt-1 w-4 h-4" />
-                  <span className="text-gray-800 text-sm">{tip}</span>
-                </li>
+                  <div className="p-2 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                    <Lightbulb className="text-green-600 w-5 h-5" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-gray-800 leading-relaxed">{tip}</p>
+                  </div>
+                  <ChevronRight className="w-5 h-5 text-green-400 group-hover:text-green-600 transition-colors" />
+                </div>
               ))}
-            </ul>
-          </div>
-        ) : (
-          <div className="text-center py-8">
-            <Lightbulb className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-            <p className="text-gray-500 italic">
-              {resumeData.analysisComplete
-                ? "No suggestions available. Your resume looks optimized!"
-                : "Upload a resume and select a role to see AI suggestions."}
-            </p>
-          </div>
-        )}
+            </div>
+          ) : (
+            <div className="text-center py-16">
+              <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <Lightbulb className="w-10 h-10 text-gray-400" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-700 mb-2">
+                {resumeData.analysisComplete
+                  ? "Great job! No suggestions needed"
+                  : "Ready to optimize your resume?"}
+              </h3>
+              <p className="text-gray-500 max-w-md mx-auto">
+                {resumeData.analysisComplete
+                  ? "Your resume is already well-optimized for ATS systems!"
+                  : "Upload your resume and select a target job role to receive personalized AI suggestions."}
+              </p>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

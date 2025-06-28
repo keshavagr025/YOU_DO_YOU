@@ -15,6 +15,8 @@ import {
   BarChart3,
   Users,
 } from "lucide-react";
+import UserProfile from './UserProfile';
+
 
 const Sidebar = ({ isOpen, setIsOpen }) => {
   const { pathname } = useLocation();
@@ -46,7 +48,7 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
     backdrop-blur-2xl border-r border-purple-200/50 
     shadow-[0_20px_70px_rgba(147,51,234,0.15)]`}
 >
-
+<UserProfile isOpen={isOpen} />
         {/* Top Logo Section with Glassmorphism */}
         <div className="flex items-center justify-between h-20 relative">
           <button

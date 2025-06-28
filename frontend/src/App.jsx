@@ -32,9 +32,15 @@ function App() {
                 upcomingRef={upcomingRef}
                 testimonialsRef={testimonialsRef}
               />
+
               <div ref={baseRef}><Base /></div>
-              <div ref={featuresRef}><Feature /></div>
-              <div ref={upcomingRef}><Upcoming /></div>
+
+              {/* ✅ Shared Gradient Background for Feature & Upcoming */}
+              <div className=" bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900">
+                <div ref={featuresRef}><Feature /></div>
+                <div ref={upcomingRef}><Upcoming /></div>
+              </div>
+
               <div ref={testimonialsRef}><Testimonials /></div>
               <Footer />
               <ChatBot />
