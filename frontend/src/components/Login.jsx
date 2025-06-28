@@ -1,18 +1,26 @@
 // components/Login.jsx
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import API from "../utils/api";
 
 const Login = () => {
   const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    alert("Logged in with: " + JSON.stringify(form));
-    // Add login logic here
+    try {
+    const res = await API.post('/auth/login', form);
+      localStorage.setItem("token", res.data.token);
+      alert("Login Successful!");
+     window.location.href = "http://localhost:5173/";
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    }
   };
 
   return (
@@ -22,6 +30,7 @@ const Login = () => {
         className="bg-white p-6 rounded shadow-md w-full max-w-sm"
       >
         <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+        {error && <p className="text-red-500 mb-2 text-sm">{error}</p>}
         <input
           name="email"
           type="email"
@@ -47,7 +56,7 @@ const Login = () => {
           Login
         </button>
         <p className="mt-3 text-center text-sm">
-          Don't have an account?{" "}
+          Don’t have an account?{" "}
           <Link to="/signup" className="text-blue-500 underline">
             Sign up
           </Link>
