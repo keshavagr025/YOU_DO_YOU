@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 
-import About from "./components/About";
+// import About from "./components/About";
 import Feature from "./components/Feature";
 import Testimonials from "./components/Testimonials";
 import SignUp from "./components/SignUp";
@@ -14,18 +14,21 @@ import Footer from "./components/Footer";
 // import ResumeAnalyzer from "./components/UploadResume/ResumeAnalyzer";
 import ChatBot from "./components/ChatBot";
 import Upcoming from "./components/Upcoming";
+import Base from "./components/Base";
 
 // Home Page Component
 const Home = ({ isLoggedIn }) => (
   <>
 
-    <Hero />
-     <section className="relative isolate bg-gradient-to-br from-blue-50 via-[#3d6380] to-red-50">
-        <About/>
+    {/* <Hero />
+     <section className="relative isolate bg-gradient-to-br from-blue-50 via-[#3d6380] to-red-50"> */}
+        {/* <About/> */}
+        <Hero />
+        <Base />
         <Feature />
         <Upcoming />
         <Testimonials />
-      </section>
+      {/* </section> */}
     <Footer />
     <ChatBot />
     {/* {isLoggedIn && <UploadResume />} */}
@@ -45,7 +48,7 @@ const App = () => {
       <Routes>
         {/* 🛠️ Pass the isLoggedIn prop here */}
         <Route path="/" element={<Home isLoggedIn={isLoggedIn} />} />
-        <Route path="/about" element={<About />} />
+        <Route path="/hero" element={<Hero />} />
         <Route path="/features" element={<Feature />} />
         <Route path="/upcoming" element={<Upcoming />} />
         <Route path="/testimonials" element={<Testimonials />} />

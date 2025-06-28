@@ -5,16 +5,18 @@ import { FaBolt, FaUserCheck, FaBrain } from "react-icons/fa";
 
 const Upcoming = () => {
   return (
-    <section
-      className=" py-20 px-6"
-      id="upcoming"
-    >
-      <div className="max-w-6xl mx-auto">
-        <h2 className="text-4xl md:text-5xl font-bold text-center text-gray-800 mb-20">
+    <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white min-h-screen py-24 px-6 overflow-hidden">
+      {/* Snow Effect Layer */}
+      <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+        <div className="absolute top-0 left-0 w-full h-full animate-snowfall bg-[url('/snow.png')] opacity-20" />
+      </div>
+
+      <div className="max-w-6xl mx-auto relative z-10">
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-gradient-to-r from-pink-300 to-sky-300 bg-clip-text text-transparent">
           🚀 Upcoming Features
         </h2>
 
-        {/* Feature 1 — Lottie on left, text on right */}
+        {/* Feature 1 */}
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -30,19 +32,21 @@ const Upcoming = () => {
             />
           </div>
           <div className="w-full md:w-1/2">
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <FaBrain className="text-3xl text-indigo-600 mb-4" />
-              <h3 className="text-2xl font-bold mb-3 text-gray-800">
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl">
+              <FaBrain className="text-3xl text-purple-400 mb-4" />
+              <h3 className="text-2xl font-bold mb-3 text-white">
                 Real-Time LLM Feedback
               </h3>
-              <p className="text-gray-700 leading-relaxed">
-                Get on-the-spot suggestions using cutting-edge large language models. Improve grammar, tone, clarity, and keyword match in real-time as you write or upload your resume.
+              <p className="text-white/90 leading-relaxed">
+                Get on-the-spot suggestions using cutting-edge large language
+                models. Improve grammar, tone, clarity, and keyword match in
+                real-time.
               </p>
             </div>
           </div>
         </motion.div>
 
-        {/* Feature 2 — Text on left, no animation */}
+        {/* Feature 2 */}
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -53,28 +57,29 @@ const Upcoming = () => {
             <img
               src="https://via.placeholder.com/500x300"
               alt="Resume Score Placeholder"
-              className="rounded-xl shadow-lg w-full"
+              className="rounded-2xl shadow-xl"
             />
           </div>
           <div className="w-full md:w-1/2">
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <FaBolt className="text-3xl text-yellow-600 mb-4" />
-              <h3 className="text-2xl font-bold mb-3 text-gray-800">
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl">
+              <FaBolt className="text-3xl text-yellow-400 mb-4" />
+              <h3 className="text-2xl font-bold mb-3 text-white">
                 Resume Performance Score
               </h3>
-              <p className="text-gray-700 leading-relaxed">
-                Know how your resume stacks up. Get scores based on ATS compatibility, keyword match, readability, and structure — all in a simplified report.
+              <p className="text-white/90 leading-relaxed">
+                Know how your resume stacks up. Get scores based on ATS
+                compatibility, keyword match, readability, and structure.
               </p>
             </div>
           </div>
         </motion.div>
 
-        {/* Feature 3 — Lottie again on left */}
+        {/* Feature 3 */}
         <motion.div
           initial={{ opacity: 0, y: 80 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col md:flex-row items-center gap-12 mb-24"
+          className="flex flex-col md:flex-row items-center gap-12"
         >
           <div className="w-full md:w-1/2 h-[300px] flex items-center justify-center">
             <DotLottieReact
@@ -85,19 +90,19 @@ const Upcoming = () => {
             />
           </div>
           <div className="w-full md:w-1/2">
-            <div className="bg-white rounded-xl shadow-md p-8">
-              <FaUserCheck className="text-3xl text-green-600 mb-4" />
-              <h3 className="text-2xl font-bold mb-3 text-gray-800">
+            <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl">
+              <FaUserCheck className="text-3xl text-green-400 mb-4" />
+              <h3 className="text-2xl font-bold mb-3 text-white">
                 Auto-Tailored Resume Generator
               </h3>
-              <p className="text-gray-700 leading-relaxed">
-                Paste any job description, and our engine will craft a resume optimized for that role, matching responsibilities, tone, and keywords.
+              <p className="text-white/90 leading-relaxed">
+                Paste any job description, and our engine will craft a resume
+                optimized for that role, matching responsibilities, tone, and
+                keywords.
               </p>
             </div>
           </div>
         </motion.div>
-
-        {/* You can continue adding more blocks this way */}
       </div>
     </section>
   );
