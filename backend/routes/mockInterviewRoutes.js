@@ -1,451 +1,469 @@
-// routes/learningRoutes.js
 import express from 'express';
-import axios from 'axios';
-import dotenv from 'dotenv';
-import LearningRoadmap from '../models/LearningRoadmap.js';
-import Course from '../models/Course.js';
-
-dotenv.config();
+import Groq from 'groq-sdk';
+import multer from 'multer';
+import fetch from 'node-fetch';
+import FormData from 'form-data';
+import Interview from '../models/Interview.js';
 
 const router = express.Router();
 
-// YouTube API configuration
-const YOUTUBE_API_KEY = process.env.YOUTUBE_API_KEY;
-const YOUTUBE_BASE_URL = 'https://www.googleapis.com/youtube/v3';
-
-// Udemy API configuration (if you have access)
-const UDEMY_CLIENT_ID = process.env.UDEMY_CLIENT_ID;
-const UDEMY_CLIENT_SECRET = process.env.UDEMY_CLIENT_SECRET;
-
-// Generate personalized roadmap
-router.post('/generate-roadmap', async (req, res) => {
-  try {
-    const { userProfile } = req.body;
-    const { name, currentLevel, targetRole, timeCommitment, learningStyle, budget } = userProfile;
-
-    // Generate roadmap based on user profile
-    const roadmap = await generateRoadmapData(userProfile);
-    
-    // Fetch real-time courses and videos for each phase
-    const enhancedRoadmap = await enhanceRoadmapWithRealData(roadmap, userProfile);
-
-    // Save to database
-    const savedRoadmap = await LearningRoadmap.create({
-      userId: req.user?.id || 'anonymous',
-      userProfile,
-      roadmap: enhancedRoadmap,
-      createdAt: new Date()
-    });
-
-    res.json({
-      success: true,
-      roadmap: enhancedRoadmap,
-      roadmapId: savedRoadmap._id
-    });
-
-  } catch (error) {
-    console.error('Error generating roadmap:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to generate roadmap',
-      error: error.message
-    });
-  }
+// Initialize Groq (Free ChatGPT alternative)
+const groq = new Groq({
+  apiKey: process.env.GROQ_API_KEY, // Get free key from console.groq.com
 });
 
-// Get YouTube videos for specific skill
-router.get('/youtube-videos/:skill', async (req, res) => {
-  try {
-    const { skill } = req.params;
-    const { level = 'beginner', maxResults = 10 } = req.query;
-
-    const searchQuery = `${skill} tutorial ${level} programming`;
-    
-    const response = await axios.get(`${YOUTUBE_BASE_URL}/search`, {
-      params: {
-        key: YOUTUBE_API_KEY,
-        q: searchQuery,
-        part: 'snippet',
-        type: 'video',
-        maxResults: maxResults,
-        order: 'relevance',
-        videoDuration: 'medium', // 4-20 minutes
-        videoDefinition: 'high'
-      }
-    });
-
-    const videos = response.data.items.map(item => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      description: item.snippet.description,
-      thumbnail: item.snippet.thumbnails.medium.url,
-      channelTitle: item.snippet.channelTitle,
-      publishedAt: item.snippet.publishedAt,
-      url: `https://www.youtube.com/watch?v=${item.id.videoId}`
-    }));
-
-    res.json({
-      success: true,
-      videos,
-      skill
-    });
-
-  } catch (error) {
-    console.error('Error fetching YouTube videos:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch YouTube videos',
-      error: error.message
-    });
-  }
-});
-
-// Get courses from multiple platforms
-router.get('/courses/:skill', async (req, res) => {
-  try {
-    const { skill } = req.params;
-    const { budget = 'all', level = 'beginner' } = req.query;
-
-    const courses = await fetchCoursesFromPlatforms(skill, budget, level);
-
-    res.json({
-      success: true,
-      courses,
-      skill
-    });
-
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch courses',
-      error: error.message
-    });
-  }
-});
-
-// Get trending skills and technologies
-router.get('/trending-skills', async (req, res) => {
-  try {
-    const trendingSkills = await fetchTrendingSkills();
-    
-    res.json({
-      success: true,
-      trendingSkills
-    });
-
-  } catch (error) {
-    console.error('Error fetching trending skills:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch trending skills',
-      error: error.message
-    });
-  }
-});
-
-// Helper function to generate roadmap data
-async function generateRoadmapData(userProfile) {
-  const { targetRole, currentLevel, timeCommitment } = userProfile;
-  
-  const roadmapTemplates = {
-    'fullstack': {
-      title: 'Full Stack Developer Roadmap',
-      duration: calculateDuration(currentLevel, timeCommitment),
-      phases: [
-        {
-          name: 'Frontend Fundamentals',
-          duration: '4-6 weeks',
-          skills: ['HTML5', 'CSS3', 'JavaScript ES6+', 'Responsive Design'],
-          description: 'Build a solid foundation in web development basics'
-        },
-        {
-          name: 'React Mastery',
-          duration: '3-4 weeks',
-          skills: ['React Hooks', 'State Management', 'Component Design', 'React Router'],
-          description: 'Master modern React development'
-        },
-        {
-          name: 'Backend Development',
-          duration: '4-5 weeks',
-          skills: ['Node.js', 'Express.js', 'MongoDB', 'REST APIs'],
-          description: 'Learn server-side development and databases'
-        },
-        {
-          name: 'DevOps & Deployment',
-          duration: '2-3 weeks',
-          skills: ['Git', 'Docker', 'AWS/Heroku', 'CI/CD'],
-          description: 'Deploy and maintain applications'
-        }
-      ]
-    },
-    'ai-engineer': {
-      title: 'AI Engineer Roadmap',
-      duration: calculateDuration(currentLevel, timeCommitment),
-      phases: [
-        {
-          name: 'Python & Math Foundations',
-          duration: '3-4 weeks',
-          skills: ['Python Programming', 'Linear Algebra', 'Statistics', 'NumPy/Pandas'],
-          description: 'Build mathematical and programming foundations'
-        },
-        {
-          name: 'Machine Learning',
-          duration: '6-8 weeks',
-          skills: ['Scikit-learn', 'Supervised Learning', 'Unsupervised Learning', 'Model Evaluation'],
-          description: 'Learn core machine learning concepts'
-        },
-        {
-          name: 'Deep Learning',
-          duration: '8-10 weeks',
-          skills: ['TensorFlow', 'PyTorch', 'Neural Networks', 'CNN', 'RNN'],
-          description: 'Master deep learning and neural networks'
-        },
-        {
-          name: 'AI Applications',
-          duration: '4-6 weeks',
-          skills: ['Computer Vision', 'NLP', 'MLOps', 'Model Deployment'],
-          description: 'Build real-world AI applications'
-        }
-      ]
-    },
-    'data-scientist': {
-      title: 'Data Scientist Roadmap',
-      duration: calculateDuration(currentLevel, timeCommitment),
-      phases: [
-        {
-          name: 'Data Analysis Fundamentals',
-          duration: '3-4 weeks',
-          skills: ['Python/R', 'SQL', 'Excel', 'Statistics'],
-          description: 'Master data manipulation and analysis'
-        },
-        {
-          name: 'Data Visualization',
-          duration: '2-3 weeks',
-          skills: ['Matplotlib', 'Seaborn', 'Plotly', 'Tableau'],
-          description: 'Learn to visualize and present data'
-        },
-        {
-          name: 'Machine Learning for Data Science',
-          duration: '6-8 weeks',
-          skills: ['Scikit-learn', 'Feature Engineering', 'Model Selection', 'Cross-validation'],
-          description: 'Apply ML techniques to data problems'
-        },
-        {
-          name: 'Big Data & Cloud',
-          duration: '4-5 weeks',
-          skills: ['Apache Spark', 'Hadoop', 'AWS/Azure', 'Data Pipelines'],
-          description: 'Handle large-scale data processing'
-        }
-      ]
+// Multer for audio file uploads
+const storage = multer.memoryStorage();
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('audio/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only audio files are allowed'), false);
     }
-  };
-
-  return roadmapTemplates[targetRole] || roadmapTemplates['fullstack'];
-}
-
-// Helper function to enhance roadmap with real data
-async function enhanceRoadmapWithRealData(roadmap, userProfile) {
-  const enhancedPhases = await Promise.all(
-    roadmap.phases.map(async (phase) => {
-      const enhancedResources = await Promise.all(
-        phase.skills.map(async (skill) => {
-          try {
-            // Fetch YouTube videos
-            const videos = await fetchYouTubeVideos(skill, userProfile.currentLevel);
-            
-            // Fetch courses
-            const courses = await fetchCoursesFromPlatforms(skill, userProfile.budget, userProfile.currentLevel);
-            
-            return {
-              skill,
-              videos: videos.slice(0, 3), // Top 3 videos
-              courses: courses.slice(0, 2) // Top 2 courses
-            };
-          } catch (error) {
-            console.error(`Error fetching resources for ${skill}:`, error);
-            return {
-              skill,
-              videos: [],
-              courses: []
-            };
-          }
-        })
-      );
-
-      return {
-        ...phase,
-        resources: enhancedResources
-      };
-    })
-  );
-
-  return {
-    ...roadmap,
-    phases: enhancedPhases
-  };
-}
-
-// Helper function to fetch YouTube videos
-async function fetchYouTubeVideos(skill, level = 'beginner', maxResults = 5) {
-  try {
-    const searchQuery = `${skill} tutorial ${level} programming`;
-    
-    const response = await axios.get(`${YOUTUBE_BASE_URL}/search`, {
-      params: {
-        key: YOUTUBE_API_KEY,
-        q: searchQuery,
-        part: 'snippet',
-        type: 'video',
-        maxResults: maxResults,
-        order: 'relevance',
-        videoDuration: 'medium'
-      }
-    });
-
-    return response.data.items.map(item => ({
-      id: item.id.videoId,
-      title: item.snippet.title,
-      description: item.snippet.description.substring(0, 150) + '...',
-      thumbnail: item.snippet.thumbnails.medium.url,
-      channelTitle: item.snippet.channelTitle,
-      publishedAt: item.snippet.publishedAt,
-      url: `https://www.youtube.com/watch?v=${item.id.videoId}`,
-      type: 'youtube'
-    }));
-
-  } catch (error) {
-    console.error('Error fetching YouTube videos:', error);
-    return [];
   }
-}
+});
 
-// Helper function to fetch courses from multiple platforms
-async function fetchCoursesFromPlatforms(skill, budget, level) {
-  const courses = [];
-
-  try {
-    // Free resources
-    const freeResources = getFreeResources(skill, level);
-    courses.push(...freeResources);
-
-    // If budget allows, fetch paid courses
-    if (budget !== 'Free only') {
-      // You can integrate with course APIs here
-      const paidCourses = await fetchPaidCourses(skill, level, budget);
-      courses.push(...paidCourses);
-    }
-
-    return courses;
-
-  } catch (error) {
-    console.error('Error fetching courses:', error);
-    return courses;
-  }
-}
-
-// Helper function to get free resources
-function getFreeResources(skill, level) {
-  const freeResourcesMap = {
-    'HTML5': [
-      {
-        title: 'FreeCodeCamp HTML Tutorial',
-        platform: 'FreeCodeCamp',
-        price: 'Free',
-        rating: 4.9,
-        url: 'https://www.freecodecamp.org/learn/responsive-web-design/',
-        type: 'course',
-        duration: '10 hours'
-      }
-    ],
-    'JavaScript ES6+': [
-      {
-        title: 'JavaScript Info - Modern Tutorial',
-        platform: 'JavaScript.info',
-        price: 'Free',
-        rating: 4.8,
-        url: 'https://javascript.info/',
-        type: 'documentation',
-        duration: 'Self-paced'
-      }
-    ],
-    'React Hooks': [
-      {
-        title: 'React Official Documentation',
-        platform: 'React.dev',
-        price: 'Free',
-        rating: 4.9,
-        url: 'https://react.dev/learn',
-        type: 'documentation',
-        duration: 'Self-paced'
-      }
-    ],
-    'Python Programming': [
-      {
-        title: 'Python for Everybody',
-        platform: 'Coursera',
-        price: 'Free (Audit)',
-        rating: 4.8,
-        url: 'https://www.coursera.org/specializations/python',
-        type: 'course',
-        duration: '8 weeks'
-      }
+// Interview roles configuration
+// Interview roles configuration
+const INTERVIEW_ROLES = {
+  frontend: {
+    name: 'Frontend Developer',
+    questions: [
+      "Tell me about your experience with React and its ecosystem.",
+      "How do you handle state management in large applications?",
+      "Explain the difference between controlled and uncontrolled components.",
+      "How do you optimize React application performance?",
+      "What's your approach to responsive design and CSS?"
     ]
-  };
+  },
+  backend: {
+    name: 'Backend Developer',
+    questions: [
+      "Explain your experience with Node.js and Express.js.",
+      "How do you handle database optimization and queries?",
+      "Describe your approach to API design and RESTful services.",
+      "How do you implement authentication and authorization?",
+      "What's your experience with microservices architecture?"
+    ]
+  },
+  fullstack: {
+    name: 'Full Stack Developer',
+    questions: [
+      "Walk me through building a complete web application from scratch.",
+      "How do you manage data flow between frontend and backend?",
+      "Explain your approach to testing across the full stack.",
+      "How do you handle deployment and DevOps processes?",
+      "Describe a challenging technical problem you solved recently."
+    ]
+  },
+  devops: {
+    name: 'DevOps Engineer',
+    questions: [
+      "Explain the CI/CD pipeline you’ve worked with.",
+      "How do you ensure application scalability and high availability?",
+      "What tools do you use for infrastructure as code?",
+      "How do you monitor application performance and availability?",
+      "Describe how you handle system outages and rollback procedures."
+    ]
+  },
+  dataScientist: {
+    name: 'Data Scientist',
+    questions: [
+      "Describe your process for building a machine learning model.",
+      "What’s the difference between supervised and unsupervised learning?",
+      "How do you handle missing or imbalanced data?",
+      "Which tools/libraries do you use for data visualization?",
+      "Explain a data science project you’re particularly proud of."
+    ]
+  },
+  mobile: {
+    name: 'Mobile App Developer',
+    questions: [
+      "What’s your experience with Flutter or React Native?",
+      "How do you manage performance optimization on mobile devices?",
+      "Explain the app deployment process for iOS and Android.",
+      "How do you handle offline data and sync scenarios?",
+      "Describe your approach to secure mobile app development."
+    ]
+  },
+  uiux: {
+    name: 'UI/UX Designer',
+    questions: [
+      "How do you balance user needs with business goals in design?",
+      "Walk me through your design process.",
+      "What tools do you use for wireframing and prototyping?",
+      "How do you gather and incorporate user feedback?",
+      "Describe a successful project where your design impacted user engagement."
+    ]
+  },
+  cybersecurity: {
+    name: 'Cybersecurity Analyst',
+    questions: [
+      "How do you detect and prevent common cyber threats?",
+      "Explain the difference between symmetric and asymmetric encryption.",
+      "What’s your experience with incident response?",
+      "How do you stay updated with evolving cybersecurity threats?",
+      "Describe a time when you identified and mitigated a major vulnerability."
+    ]
+  }
+};
 
-  return freeResourcesMap[skill] || [];
-}
 
-// Helper function to fetch paid courses (mock implementation)
-async function fetchPaidCourses(skill, level, budget) {
-  // This would integrate with actual course APIs
-  // For now, returning mock data
-  const mockCourses = [
-    {
-      title: `Advanced ${skill} Masterclass`,
-      platform: 'Udemy',
-      price: '$49.99',
-      originalPrice: '$199.99',
-      rating: 4.7,
-      students: 25000,
-      url: '#',
-      type: 'course',
-      duration: '12 hours',
-      level: level
+// Get available interview roles
+router.get('/roles', (req, res) => {
+  try {
+    res.json({
+      success: true,
+      data: INTERVIEW_ROLES
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch interview roles'
+    });
+  }
+});
+
+// Start new interview session
+router.post('/start', async (req, res) => {
+  try {
+    const { role, candidateName, candidateEmail } = req.body;
+
+    if (!role || !INTERVIEW_ROLES[role]) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid interview role'
+      });
     }
-  ];
 
-  return mockCourses;
+    const interview = new Interview({
+      role,
+      candidateName: candidateName || 'Anonymous',
+      candidateEmail: candidateEmail || null,
+      questions: INTERVIEW_ROLES[role].questions,
+      status: 'in_progress'
+    });
+
+    await interview.save();
+
+    // Get first question
+    const firstQuestion = INTERVIEW_ROLES[role].questions[0];
+
+    res.json({
+      success: true,
+      data: {
+        interviewId: interview._id,
+        role: INTERVIEW_ROLES[role].name,
+        firstQuestion,
+        totalQuestions: INTERVIEW_ROLES[role].questions.length
+      }
+    });
+  } catch (error) {
+    console.error('Start interview error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to start interview'
+    });
+  }
+});
+
+// Submit answer and get feedback (Using Groq instead of OpenAI)
+router.post('/answer', async (req, res) => {
+  try {
+    const { interviewId, answer, questionIndex } = req.body;
+
+    if (!interviewId || !answer) {
+      return res.status(400).json({
+        success: false,
+        message: 'Interview ID and answer are required'
+      });
+    }
+
+    const interview = await Interview.findById(interviewId);
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: 'Interview not found'
+      });
+    }
+
+    // Get current question
+    const currentQuestion = interview.questions[questionIndex];
+
+    // Generate AI feedback using Groq (FREE!)
+    const feedbackPrompt = `
+You are an experienced technical interviewer. Analyze this interview answer and provide constructive feedback.
+
+Question: ${currentQuestion}
+Answer: ${answer}
+Role: ${interview.role}
+
+Please provide feedback in exactly this JSON format:
+{
+  "score": [number from 1-10],
+  "strengths": "[what was good about the answer]",
+  "improvements": "[areas that need improvement]",
+  "suggestions": "[specific suggestions for better answers]"
 }
 
-// Helper function to calculate duration based on level and commitment
-function calculateDuration(currentLevel, timeCommitment) {
-  const baseWeeks = {
-    'Beginner': 16,
-    'Intermediate': 12,
-    'Advanced': 8
-  };
+Be professional, constructive, and encouraging.`;
 
-  const timeMultiplier = {
-    '1-2 hours/day': 1.5,
-    '3-4 hours/day': 1.0,
-    '5+ hours/day': 0.7
-  };
+    let feedback;
+    try {
+      const aiResponse = await groq.chat.completions.create({
+        model: "llama3-8b-8192", // Fast and free model
+        messages: [
+          {
+            role: "system",
+            content: "You are an experienced technical interviewer providing constructive feedback. Always respond with valid JSON only."
+          },
+          {
+            role: "user",
+            content: feedbackPrompt
+          }
+        ],
+        max_tokens: 400,
+        temperature: 0.7,
+      });
 
-  const weeks = Math.ceil(baseWeeks[currentLevel] * timeMultiplier[timeCommitment]);
-  return `${weeks-2}-${weeks} weeks`;
-}
+      // Try to parse JSON response
+      const content = aiResponse.choices[0].message.content.trim();
+      // Extract JSON if it's wrapped in markdown
+      const jsonMatch = content.match(/```json\n([\s\S]*?)\n```/) || content.match(/\{[\s\S]*\}/);
+      const jsonString = jsonMatch ? jsonMatch[1] || jsonMatch[0] : content;
+      
+      feedback = JSON.parse(jsonString);
+      
+      // Validate feedback structure
+      if (!feedback.score || !feedback.strengths || !feedback.improvements || !feedback.suggestions) {
+        throw new Error('Invalid feedback format');
+      }
+      
+    } catch (parseError) {
+      console.error('AI feedback parsing error:', parseError);
+      // Fallback feedback if AI fails
+      feedback = {
+        score: 7,
+        strengths: "Good technical understanding demonstrated in your response.",
+        improvements: "Could provide more specific examples and deeper technical details.",
+        suggestions: "Consider adding concrete examples from your experience and explaining your thought process step by step."
+      };
+    }
 
-// Helper function to fetch trending skills
-async function fetchTrendingSkills() {
-  // This could integrate with job market APIs, GitHub trending, etc.
-  return [
-    { skill: 'React', trend: '+15%', demandLevel: 'High' },
-    { skill: 'Python', trend: '+22%', demandLevel: 'Very High' },
-    { skill: 'TypeScript', trend: '+18%', demandLevel: 'High' },
-    { skill: 'AWS', trend: '+25%', demandLevel: 'Very High' },
-    { skill: 'Docker', trend: '+20%', demandLevel: 'High' }
-  ];
-}
+    // Save answer and feedback
+    interview.answers.push({
+      questionIndex,
+      question: currentQuestion,
+      answer,
+      feedback,
+      timestamp: new Date()
+    });
+
+    // Check if interview is complete
+    const nextQuestionIndex = questionIndex + 1;
+    const isComplete = nextQuestionIndex >= interview.questions.length;
+
+    if (isComplete) {
+      interview.status = 'completed';
+      interview.completedAt = new Date();
+      
+      // Calculate overall score
+      const totalScore = interview.answers.reduce((sum, ans) => sum + ans.feedback.score, 0);
+      interview.overallScore = Math.round(totalScore / interview.answers.length);
+    }
+
+    await interview.save();
+
+    const response = {
+      success: true,
+      data: {
+        feedback,
+        nextQuestion: isComplete ? null : interview.questions[nextQuestionIndex],
+        nextQuestionIndex: isComplete ? null : nextQuestionIndex,
+        isComplete,
+        overallScore: isComplete ? interview.overallScore : null
+      }
+    };
+
+    res.json(response);
+
+  } catch (error) {
+    console.error('Answer submission error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process answer'
+    });
+  }
+});
+
+// Transcribe audio to text (Using AssemblyAI - Free Alternative)
+router.post('/transcribe', upload.single('audio'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Audio file is required'
+      });
+    }
+
+    // Option 1: AssemblyAI (Free tier: 5 hours/month)
+    if (process.env.ASSEMBLYAI_API_KEY) {
+      try {
+        // Upload audio file
+        const uploadResponse = await fetch('https://api.assemblyai.com/v2/upload', {
+          method: 'POST',
+          headers: {
+            'Authorization': process.env.ASSEMBLYAI_API_KEY,
+            'Content-Type': 'application/octet-stream',
+          },
+          body: req.file.buffer
+        });
+        
+        const uploadData = await uploadResponse.json();
+        
+        // Request transcription
+        const transcriptResponse = await fetch('https://api.assemblyai.com/v2/transcript', {
+          method: 'POST',
+          headers: {
+            'Authorization': process.env.ASSEMBLYAI_API_KEY,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            audio_url: uploadData.upload_url,
+            language_code: 'en'
+          })
+        });
+        
+        const transcript = await transcriptResponse.json();
+        
+        // Poll for completion (simplified - you might want to implement proper polling)
+        let result = transcript;
+        while (result.status !== 'completed' && result.status !== 'error') {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const statusResponse = await fetch(`https://api.assemblyai.com/v2/transcript/${result.id}`, {
+            headers: { 'Authorization': process.env.ASSEMBLYAI_API_KEY }
+          });
+          result = await statusResponse.json();
+        }
+        
+        if (result.status === 'completed') {
+          return res.json({
+            success: true,
+            data: { text: result.text }
+          });
+        }
+      } catch (assemblyError) {
+        console.error('AssemblyAI transcription error:', assemblyError);
+      }
+    }
+
+    // Option 2: Browser Web Speech API (Fallback - client-side only)
+    // Return instructions for client-side implementation
+    res.json({
+      success: false,
+      message: 'Server-side transcription not available. Please use browser speech recognition.',
+      fallback: 'web_speech_api'
+    });
+
+  } catch (error) {
+    console.error('Transcription error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to transcribe audio'
+    });
+  }
+});
+
+// Alternative: Simple text-to-speech endpoint (optional)
+router.post('/speak', async (req, res) => {
+  try {
+    const { text } = req.body;
+    
+    if (!text) {
+      return res.status(400).json({
+        success: false,
+        message: 'Text is required'
+      });
+    }
+
+    // Return text for client-side speech synthesis
+    res.json({
+      success: true,
+      data: {
+        text: text,
+        instruction: 'Use browser Speech Synthesis API'
+      }
+    });
+
+  } catch (error) {
+    console.error('Speech error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to process speech request'
+    });
+  }
+});
+
+// Get interview results
+router.get('/results/:interviewId', async (req, res) => {
+  try {
+    const interview = await Interview.findById(req.params.interviewId);
+    
+    if (!interview) {
+      return res.status(404).json({
+        success: false,
+        message: 'Interview not found'
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        interviewId: interview._id,
+        role: interview.role,
+        candidateName: interview.candidateName,
+        status: interview.status,
+        overallScore: interview.overallScore,
+        duration: interview.completedAt ? 
+          Math.round((interview.completedAt - interview.createdAt) / 1000 / 60) : null,
+        answers: interview.answers,
+        createdAt: interview.createdAt,
+        completedAt: interview.completedAt
+      }
+    });
+
+  } catch (error) {
+    console.error('Get results error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch interview results'
+    });
+  }
+});
+
+// Get interview history
+router.get('/history', async (req, res) => {
+  try {
+    const interviews = await Interview.find()
+      .select('role candidateName status overallScore createdAt completedAt')
+      .sort({ createdAt: -1 })
+      .limit(50);
+
+    res.json({
+      success: true,
+      data: interviews
+    });
+
+  } catch (error) {
+    console.error('Get history error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch interview history'
+    });
+  }
+});
 
 export default router;
