@@ -13,8 +13,6 @@ const Base= () => {
     if (file && (file.type === "application/pdf" || file.name.endsWith('.pdf'))) {
       setUploadedFile(file);
       setIsAnalyzing(true);
-      
-      // Simulate analysis
       setTimeout(() => {
         setIsAnalyzing(false);
         setAnalysisResult({

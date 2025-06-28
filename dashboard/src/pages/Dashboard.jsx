@@ -20,7 +20,7 @@ import {
   UserCheck,
   TrendingUp,
   Clock,
-  Search,
+  // Search,
   Plus,
   Filter,
 } from "lucide-react";
@@ -165,9 +165,9 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="p-3 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-white/90 transition-all duration-200 hover:scale-105">
+            {/* <button className="p-3 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-white/90 transition-all duration-200 hover:scale-105">
               <Search size={18} className="text-gray-600" />
-            </button>
+            </button> */}
             <div className="relative inline-block">
               {/* Button */}
               <button
@@ -341,59 +341,7 @@ const Dashboard = () => {
         {/* Recent Activity */}
         <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-200 transition-all duration-300 w-full">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-gray-800">
-              📜 Recent Job Applications
-            </h3>
-            <span className="text-sm text-gray-500">
-              Last updated 2 hours ago
-            </span>
-          </div>
-
-          {/* Timeline */}
-          <div className="space-y-6">
-            {[
-              {
-                company: "Google",
-                role: "Frontend Developer",
-                status: "Interview",
-                color: "green",
-              },
-              {
-                company: "Amazon",
-                role: "Backend Engineer",
-                status: "Under Review",
-                color: "yellow",
-              },
-              {
-                company: "Adobe",
-                role: "UI/UX Designer",
-                status: "Rejected",
-                color: "red",
-              },
-              {
-                company: "Flipkart",
-                role: "Full Stack Dev",
-                status: "Applied",
-                color: "blue",
-              },
-            ].map((item, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <div
-                  className="w-3 h-3 rounded-full bg-${item.color}-500 mt-1.5"
-                ></div>
-                <div>
-                  <p className="font-medium text-gray-800">{item.role}</p>
-                  <p className="text-sm text-gray-600">
-                    {item.company} •{" "}
-                    <span className="text-${item.color}-600 font-semibold">
-                      {item.status}
-                    </span>
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
+         
         </div>
       </main>
     </div>

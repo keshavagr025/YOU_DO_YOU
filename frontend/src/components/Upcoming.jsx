@@ -14,7 +14,7 @@ const Upcoming = () => {
 
       <div className="max-w-6xl mx-auto relative z-10">
         <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-gradient-to-r from-pink-300 to-sky-300 bg-clip-text text-transparent">
-          🚀 Upcoming Features
+           Upcoming Features
         </h2>
 
         {/* Feature 1 */}
@@ -55,11 +55,10 @@ const Upcoming = () => {
           className="flex flex-col md:flex-row-reverse items-center gap-12 mb-24"
         >
           <div className="w-full md:w-1/2">
-            <img
+            {/* <img
               src="https://via.placeholder.com/500x300"
-              alt="Resume Score Placeholder"
               className="rounded-2xl shadow-xl"
-            />
+            /> */}
           </div>
           <div className="w-full md:w-1/2">
             <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl">
@@ -94,12 +93,10 @@ const Upcoming = () => {
             <div className="bg-white/10 backdrop-blur-lg border border-white/20 p-8 rounded-2xl shadow-xl">
               <FaUserCheck className="text-3xl text-green-400 mb-4" />
               <h3 className="text-2xl font-bold mb-3 text-white">
-                Auto-Tailored Resume Generator
+                Smart Keyword Extraction
               </h3>
               <p className="text-white/90 leading-relaxed">
-                Paste any job description, and our engine will craft a resume
-                optimized for that role, matching responsibilities, tone, and
-                keywords.
+              Advanced NLP algorithms identify key skills and qualifications from job descriptions to help you tailor your resume for each application.
               </p>
             </div>
           </div>
