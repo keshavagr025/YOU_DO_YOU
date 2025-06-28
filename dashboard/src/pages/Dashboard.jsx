@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ApplicationTrendChart from "../components/ApplicationTrendChart";
+import JobApplicationsTimeline from "../components/JobApplicationsTimeline";
+import logo2 from "../assets/logo2.png"; // Adjust the path as necessary
+
 
 
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -157,9 +160,12 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
-              Welcome back
-            </h2>
+           <img
+  src={logo2}
+  alt="Welcome Logo"
+  className="w-40 h-auto mb-2"
+/>
+
             <p className="text-gray-600">
               {/* Here's your career progress overview */}
             </p>
@@ -335,13 +341,72 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="h-100">
-          <ApplicationTrendChart />
+          {/* <ApplicationTrendChart /> */}
+
+          <JobApplicationsTimeline />
+
         </div>
 
         {/* Recent Activity */}
         <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-200 transition-all duration-300 w-full">
           {/* Header */}
-         
+
+          {/* <div className="flex items-center justify-between mb-6">
+            <h3 className="text-xl font-bold text-gray-800">
+              📜 Recent Job Applications
+
+            </h3>
+            <span className="text-sm text-gray-500">
+              Last updated 2 hours ago
+            </span>
+          </div> */}
+          <ApplicationTrendChart />
+             {/* <JobApplicationsTimeline /> */}
+
+          {/* Timeline */}
+          {/* <div className="space-y-6">
+            {[
+              {
+                company: "Google",
+                role: "Frontend Developer",
+                status: "Interview",
+                color: "green",
+              },
+              {
+                company: "Amazon",
+                role: "Backend Engineer",
+                status: "Under Review",
+                color: "yellow",
+              },
+              {
+                company: "Adobe",
+                role: "UI/UX Designer",
+                status: "Rejected",
+                color: "red",
+              },
+              {
+                company: "Flipkart",
+                role: "Full Stack Dev",
+                status: "Applied",
+                color: "blue",
+              },
+            ].map((item, index) => (
+              <div key={index} className="flex items-start gap-4">
+                <div
+                  className="w-3 h-3 rounded-full bg-${item.color}-500 mt-1.5"
+                ></div>
+                <div>
+                  <p className="font-medium text-gray-800">{item.role}</p>
+                  <p className="text-sm text-gray-600">
+                    {item.company} •{" "}
+                    <span className="text-${item.color}-600 font-semibold">
+                      {item.status}
+                    </span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div> */}
         </div>
       </main>
     </div>

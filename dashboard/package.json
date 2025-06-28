@@ -12,6 +12,7 @@
   "dependencies": {
     "apexcharts": "^4.7.0",
     "axios": "^1.10.0",
+    "framer-motion": "^12.19.2",
     "lucide-react": "^0.525.0",
     "marked": "^16.0.0",
     "react": "^19.1.0",
