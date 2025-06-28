@@ -23,7 +23,7 @@ import {
   UserCheck,
   TrendingUp,
   Clock,
-  Search,
+  // Search,
   Plus,
   Filter,
 } from "lucide-react";
@@ -171,9 +171,9 @@ const Dashboard = () => {
             </p>
           </div>
           <div className="flex items-center space-x-4">
-            <button className="p-3 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-white/90 transition-all duration-200 hover:scale-105">
+            {/* <button className="p-3 rounded-2xl bg-white/80 backdrop-blur-sm shadow-lg border border-white/20 hover:bg-white/90 transition-all duration-200 hover:scale-105">
               <Search size={18} className="text-gray-600" />
-            </button>
+            </button> */}
             <div className="relative inline-block">
               {/* Button */}
               <button
@@ -350,6 +350,7 @@ const Dashboard = () => {
         {/* Recent Activity */}
         <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-200 transition-all duration-300 w-full">
           {/* Header */}
+
           {/* <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-800">
               📜 Recent Job Applications
