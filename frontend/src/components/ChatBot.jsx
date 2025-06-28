@@ -142,7 +142,7 @@ const ChatBot = () => {
             <X className="w-6 h-6 transform transition-transform duration-200" />
           ) : (
             <div className="flex items-center space-x-1">
-              <MessageCircle className="w-6 h-6" />
+              <Bot className="w-6 h-6" />
               <Sparkles className="w-4 h-4 text-yellow-300 animate-pulse" />
             </div>
           )}
