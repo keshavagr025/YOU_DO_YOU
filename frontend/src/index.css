@@ -5,3 +5,9 @@
 /* html {
   scroll-behavior: smooth;
 } */
+@font-face {
+  font-family: 'FontMano';
+  src: url('./assets/fonts/FontMano.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
