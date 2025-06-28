@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import ApplicationTrendChart from "../components/ApplicationTrendChart";
+import JobApplicationsTimeline from "../components/JobApplicationsTimeline";
+import logo2 from "../assets/logo2.png"; // Adjust the path as necessary
+
 
 
 import { Bar, Doughnut, Line } from "react-chartjs-2";
@@ -157,9 +160,12 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-2">
-              Welcome back
-            </h2>
+           <img
+  src={logo2}
+  alt="Welcome Logo"
+  className="w-40 h-auto mb-2"
+/>
+
             <p className="text-gray-600">
               {/* Here's your career progress overview */}
             </p>
@@ -335,23 +341,29 @@ const Dashboard = () => {
           </div>
         </div>
         <div className="h-100">
-          <ApplicationTrendChart />
+          {/* <ApplicationTrendChart /> */}
+
+          <JobApplicationsTimeline />
+
         </div>
 
         {/* Recent Activity */}
         <div className="bg-white/70 backdrop-blur-md p-6 md:p-8 rounded-3xl shadow-2xl border border-gray-200 transition-all duration-300 w-full">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          {/* <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-bold text-gray-800">
               📜 Recent Job Applications
+
             </h3>
             <span className="text-sm text-gray-500">
               Last updated 2 hours ago
             </span>
-          </div>
+          </div> */}
+          <ApplicationTrendChart />
+             {/* <JobApplicationsTimeline /> */}
 
           {/* Timeline */}
-          <div className="space-y-6">
+          {/* <div className="space-y-6">
             {[
               {
                 company: "Google",
@@ -393,7 +405,7 @@ const Dashboard = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </main>
     </div>
