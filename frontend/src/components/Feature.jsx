@@ -71,7 +71,7 @@ const Features = () => {
           viewport={{ once: true }}
           className="text-4xl md:text-5xl font-extrabold text-center mb-16"
         >
-          <span className="bg-gradient-to-r from-pink-400 to-sky-400 bg-clip-text text-transparent">
+          <span className="bg-gradient-to-r from-pink-400 to-sky-400 bg-clip-text text-transparent ">
             Smart AI
           </span>{" "}
           Features

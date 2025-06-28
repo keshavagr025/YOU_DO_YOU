@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { FaBolt, FaUserCheck, FaBrain } from "react-icons/fa";
-
+import rocket from '../assets/rocket.gif';
 const Upcoming = () => {
   return (
     <section className="relative bg-gradient-to-br from-purple-900 via-indigo-900 to-slate-900 text-white min-h-screen py-24 px-6 overflow-hidden">
@@ -12,8 +12,8 @@ const Upcoming = () => {
       </div>
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-gradient-to-r from-pink-300 to-sky-300 bg-clip-text text-transparent">
-          🚀 Upcoming Features
+        <h2 className="text-4xl md:text-5xl font-bold text-center mb-20 bg-gradient-to-r from-pink-300 to-sky-300 bg-clip-text text-transparent font-mono">
+           <img src={rocket} alt="icon" className="w-13 h-12 inline-block " /> Upcoming Features
         </h2>
 
         {/* Feature 1 */}
