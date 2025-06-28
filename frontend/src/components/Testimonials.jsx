@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { X, Plus, Star, Send } from "lucide-react";
+import feedback from '../assets/feedback.gif';
 
 const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState([
@@ -63,7 +64,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <div id = "testimonials" className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
+    <div className="py-20 bg-gradient-to-br from-purple-900 via-purple-800 to-indigo-900 relative overflow-hidden">
       {/* Animated background elements */}
       <div className="absolute inset-0">
         <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500/20 rounded-full blur-xl animate-pulse"></div>
@@ -74,6 +75,7 @@ const TestimonialsSection = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="text-center mb-16">
           <h2 className="text-5xl font-bold text-white mb-6 tracking-tight">
+           <img src={feedback} alt="icon" className="w-13 h-14 inline-block m-2 " /> 
             What Our Users Say
           </h2>
           <p className="text-xl text-purple-200 max-w-2xl mx-auto leading-relaxed">

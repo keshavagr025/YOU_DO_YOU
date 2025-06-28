@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import {
-  Briefcase,
   LayoutDashboard,
   FileText,
   UserCheck,
@@ -51,9 +50,9 @@ const Sidebar = ({ isOpen, setIsOpen }) => {
           {isOpen ? (
             <div className="flex items-center space-x-4 animate-fade-in">
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
+                {/* <div className="w-12 h-12 bg-gradient-to-br from-purple-500 via-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center shadow-lg">
                   <Briefcase size={22} className="text-white drop-shadow-sm" />
-                </div>
+                </div> */}
                 <div className="absolute -top-1 -right-1 w-4 h-4 bg-gradient-to-r from-green-400 to-emerald-500 rounded-full border-2 border-white shadow-sm animate-pulse" />
               </div>
               <div>
