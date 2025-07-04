@@ -17,7 +17,7 @@ const UserProfile = ({ isOpen }) => {
       {/* User Info */}
       {isOpen && (
         <div className="flex flex-col justify-center text-purple-800">
-          <span className="font-semibold text-sm">Keshav Agrawal</span>
+          <span className="font-semibold text-sm">hello</span>
           <span className="text-xs text-purple-500 flex items-center gap-1">
             {/* <Crown size={12} /> Pro Member */}
           </span>
