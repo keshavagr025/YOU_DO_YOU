@@ -57,7 +57,8 @@ const Login = () => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const response = await fetch("http://localhost:5000/api/auth/login", {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+      const response = await fetch(`${apiBase}/auth/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -80,7 +81,8 @@ const Login = () => {
         alert("Welcome back! Login successful!");
         
         // Redirect to dashboard
-        window.location.href = "http://localhost:5174";
+        const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5174";
+        window.location.href = dashboardUrl;
       }
     } catch (error) {
       console.error("Login error:", error);

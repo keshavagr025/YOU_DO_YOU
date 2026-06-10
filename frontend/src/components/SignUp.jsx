@@ -88,7 +88,8 @@ const SignUp = ({ onLogin }) => {
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      const response = await fetch("http://localhost:5000/api/auth/signup", {
+      const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
+      const response = await fetch(`${apiBase}/auth/signup`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
