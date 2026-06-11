@@ -26,8 +26,9 @@ const Applications = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
+        const apiBase = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api";
         const res = await fetch(
-          `http://localhost:5000/api/jobs?query=${
+          `${apiBase}/jobs?query=${
             searchTerm || "developer"
           }&location=${locationFilter || "remote"}`
         );

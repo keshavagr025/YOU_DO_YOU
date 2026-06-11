@@ -13,10 +13,14 @@ import dotenv from 'dotenv';
 dotenv.config();
 const app = express();
 
+const corsOrigins = process.env.CORS_ORIGIN 
+  ? process.env.CORS_ORIGIN.split(',') 
+  : ['http://localhost:5173', 'http://localhost:5174'];
+
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: corsOrigins,
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
@@ -28,7 +32,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // 🧠 MongoDB connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/resume_analytics', {
+mongoose.connect(process.env.MONGODB_URI || process.env.MONGO_URI || 'mongodb://localhost:27017/resume_analytics', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -37,7 +41,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/resume_an
 
 // 📦 Middlewares
 app.use(cors({
-  origin:  ['http://localhost:5173', 'http://localhost:5174'],
+  origin:  corsOrigins,
   credentials: true,
 }));
 app.use(express.json({ limit: '50mb' }));

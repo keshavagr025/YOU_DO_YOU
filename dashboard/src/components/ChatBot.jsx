@@ -4,7 +4,7 @@ import { marked } from 'marked';
 import {io} from 'socket.io-client';
 import './ChatBot.css';
 
-const socket = io('http://localhost:5000'); // Change if hosted
+const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000');
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
