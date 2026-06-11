@@ -81,7 +81,7 @@ const Login = () => {
         alert("Welcome back! Login successful!");
         
         // Redirect to dashboard
-        const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5174";
+        const dashboardUrl = import.meta.env.VITE_DASHBOARD_URL || "http://localhost:5175";
         window.location.href = dashboardUrl;
       }
     } catch (error) {

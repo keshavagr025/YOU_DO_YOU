@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Initialize Groq (Free ChatGPT alternative)
 const groq = new Groq({
-  apiKey: process.env.GROQ_API_KEY, // Get free key from console.groq.com
+  apiKey: process.env.GROQ_API_KEY || 'dummy_api_key_for_startup', // Get free key from console.groq.com
 });
 
 // Multer for audio file uploads
