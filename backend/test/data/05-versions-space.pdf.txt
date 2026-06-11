@@ -1,0 +1,60 @@
+
+
+Khushal kumar sahuEmail:  kkskumarsahu31@gmail.com
+Portfolio:  https://ports-beige.vercel.app/Mobile:    +91-8081267564
+Github:    https://github.com/khushalkks
+Education
+•
+Jaypee University of Engineering & Technology (JUET)Guna, India
+Bachelor of Technology -computer science and engineering; GPA: 8.86july 2023 - June 2027
+Courses:Operating Systems, Data Structures, Analysis Of Algorithms, Artificial Intelligence, Machine Learning, Networking, Databases
+Skills Summary
+•Languages:  Python, JavaScript, C++, Java, SQL, HTML5, CSS3, XML
+•Frontend:  React.js, Tailwind CSS, Bootstrap, HTML5, CSS3, Framer Motion, Web Speech API
+•Backend:  Node.js, Express.js, Flask, Firebase, REST APIs
+•Frameworks & Libraries:   scikit-learn
+•Databases:  MongoDB, MySQL, SQLite, Firebase Realtime DB
+•Tools & Platforms:  Git, GitHub, VS Code, Postman, Netlify, Vercel, Google Cloud
+•Soft Skills:  Leadership, Public Speaking, Event Management, Technical Writing, Time Management, Team Collaboration
+Projects
+•Wellero – Full-Stack Medical Care Platform (Healthcare, MERN):  Built a responsive health-tech platform enabling
+users to schedule appointments, access medical info, and receive real-time health updates.  Integrated secure backend APIs for
+patient–clinic communication, dynamic routing, and data handling.
+Tech Stack:ReactJS, Node.js, Express.js, MongoDB, JavaScript, TailwindCSS, Framer Motion
+Live Preview
+•Alpha Quiz – MCQ WebApp with Auth, Leaderboard  Certificate (React + Firebase):   Developed a dynamic
+quiz application supporting secure authentication, real-time MCQs, live leaderboard, and automatic certificate generation
+post-quiz.  Focused on modular code structure and fully responsive UI.
+Tech Stack:ReactJS, Firebase, HTML5, CSS3, JavaScript
+Live Preview
+•ReadyBoss – Full-Stack Resume  Job Tracker (MERN, Real-Time APIs):   Designed and deployed a full-stack
+platform to manage job applications, resume versions, and status tracking with real-time API updates.  Implemented JWT
+authentication, role-based routing, and responsive UI with React and Tailwind.
+Tech Stack:ReactJS, Node.js, Express.js (13+), MongoDB, JWT, TailwindCSS, REST APIs, Vercel, Render
+Live Preview
+•Robota – AI Voice Assistant WebApp (React + Gemini API):  Implemented an AI-powered voice assistant capable of
+answering queries, navigating UI elements, and maintaining real-time conversations using Gemini API and Web Speech API.
+Designed with interactive animations and conversational UI.
+Tech Stack:ReactJS, Gemini API, Web Speech API, CSS3
+Live Preview
+Achievements
+•Hackathon Participation – Hacksagon, IIIT Gwalior:  Built a Resume Tracker web app during the Hacksagon
+Hackathon using React and JavaScript.  Focused on intuitive UI and performance tracking.  Contributed to frontend and UX.
+•Google Developer Group (GDG) – Solution Challenge:  Contributed to the development of ’Wellora’, a healthcare web
+platform to improve access to medical services.  Built with React, JavaScript, and Framer Motion.  Focused on responsive
+design and smooth UX.
+•LeetCode Problem Solving:  Solved 60+ problems covering arrays, strings, recursion, and linked lists to enhance
+problem-solving and frontend logic skills.
+•Certification – NIPAM (Govt.  of India):  Completed National Intellectual Property Awareness Mission (NIPAM)
+certification under the Ministry of Commerce and Industry, Government of India, conducted by CGPDTM.
+Honors and Awards
+•Taree Zameen Par – Internship CertificateJune 2025
+Successfully completed an international-level internship focused on web development and frontend engineering.
+View Certificate
+•Hacksagon Hackathon – IIIT GwaliorJune 2025
+Participated in Hacksagon Hackathon and developed a Resume Tracker web app with focus on UI/UX and
+performance features.
+View Certificate
+•National Intellectual Property Awareness Mission (NIPAM)Apirl 2025
+Certified under NIPAM initiative by the Office of CGPDTM, Ministry of Commerce and Industry, Govt.  of India.
+View Certificate
